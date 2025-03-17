@@ -1,0 +1,1 @@
+ALTER TABLE news DROP CONSTRAINT IF EXISTS categories_length_check;
