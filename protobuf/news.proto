@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package data;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+enum Status {
+    DRAFT = 0;
+    PUBLISHED = 1;
+    ARCHIVED = 2;
+}
+
+message News {
+    int64 id = 1;
+    google.protobuf.Timestamp created_at = 2;
+    google.protobuf.Timestamp updated_at = 3;
+    string title = 4;
+    string content = 5;
+    repeated string categories = 6;
+    Status status = 7;
+    string image_url = 8;  // optional field
+    int32 version = 9;
+}
+
+message Metadata {
+    int32 total_records = 1;
+    int32 page = 2;
+    int32 page_size = 3;
+}
+
+message Filters {
+    string sort_column = 1;
+    string sort_direction = 2;
+    int32 limit = 3;
+    int32 offset = 4;
+}
+
+message GetAllRequest {
+    string title = 1;
+    repeated string categories = 2;
+    string status = 3;
+    Filters filters = 4;
+}
+
+message NewsList {
+    repeated News news = 1;
+    Metadata metadata = 2;
+}
+
+message NewsId {
+    int64 id = 1;
+}
+
+service NewsService {
+    rpc Insert (News) returns (News);
+    rpc Get (NewsId) returns (News);
+    rpc Update (News) returns (News);
+    rpc Delete (NewsId) returns (google.protobuf.Empty);
+    rpc GetAll (GetAllRequest) returns (NewsList);
+}
