@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"news_service.andreyklimov.net/internal/data"
 	"news_service.andreyklimov.net/internal/jsonlog"
@@ -47,6 +48,10 @@ type application struct {
 
 func main() {
 	var cfg config
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Ошибка при загрузке .env файла")
+	}
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("NEWS_SERVICE_DB_DSN"), "PostgreSQL DSN")
