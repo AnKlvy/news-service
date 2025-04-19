@@ -11,6 +11,38 @@ import (
 	"news_service.andreyklimov.net/internal/validator"
 )
 
+type News struct {
+	ID         int64     `json:"id"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+	Title      string    `json:"title"`
+	Content    string    `json:"content"`
+	Categories []string  `json:"categories"`
+	Status     string    `json:"status"`
+	ImageURL   *string   `json:"image_url,omitempty"`
+	Version    int32     `json:"version"`
+}
+
+// ValidateNews выполняет валидацию данных новости.
+func ValidateNews(v *validator.Validator, news *News) {
+	v.Check(news.Title != "", "title", "must be provided")
+	v.Check(len(news.Title) <= 500, "title", "must not be more than 500 bytes long")
+
+	v.Check(news.Content != "", "content", "must be provided")
+
+	v.Check(news.Categories != nil, "categories", "must be provided")
+	v.Check(len(news.Categories) >= 1, "categories", "must contain at least 1 categories")
+	v.Check(len(news.Categories) <= 10, "categories", "must not contain more than 10 categories")
+	v.Check(validator.Unique(news.Categories), "categories", "must not contain duplicate values")
+
+	v.Check(news.Status != "", "status", "must be provided")
+	v.Check(validator.PermittedValue(news.Status, "DRAFT", "PUBLISHED", "ARCHIVED"), "status", "must be a valid status")
+
+	if news.ImageURL != nil {
+		v.Check(len(*news.ImageURL) <= 1000, "image_url", "must not be more than 1000 bytes long")
+	}
+}
+
 // Определяем структуру NewsModel, которая содержит пул соединений с базой данных.
 type NewsModel struct {
 	DB *sql.DB
@@ -195,36 +227,4 @@ func (m MockNewsModel) Delete(id int64) error {
 
 func (m MockNewsModel) GetAll(title string, categories []string, status string, filters Filters) ([]*News, Metadata, error) {
 	return nil, Metadata{}, nil
-}
-
-type News struct {
-	ID         int64     `json:"id"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	Title      string    `json:"title"`
-	Content    string    `json:"content"`
-	Categories []string  `json:"categories"`
-	Status     string    `json:"status"`
-	ImageURL   *string   `json:"image_url,omitempty"`
-	Version    int32     `json:"version"`
-}
-
-// ValidateNews выполняет валидацию данных новости.
-func ValidateNews(v *validator.Validator, news *News) {
-	v.Check(news.Title != "", "title", "must be provided")
-	v.Check(len(news.Title) <= 500, "title", "must not be more than 500 bytes long")
-
-	v.Check(news.Content != "", "content", "must be provided")
-
-	v.Check(news.Categories != nil, "categories", "must be provided")
-	v.Check(len(news.Categories) >= 1, "categories", "must contain at least 1 categories")
-	v.Check(len(news.Categories) <= 10, "categories", "must not contain more than 10 categories")
-	v.Check(validator.Unique(news.Categories), "categories", "must not contain duplicate values")
-
-	v.Check(news.Status != "", "status", "must be provided")
-	v.Check(validator.PermittedValue(news.Status, "DRAFT", "PUBLISHED", "ARCHIVED"), "status", "must be a valid status")
-
-	if news.ImageURL != nil {
-		v.Check(len(*news.ImageURL) <= 1000, "image_url", "must not be more than 1000 bytes long")
-	}
 }

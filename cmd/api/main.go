@@ -4,9 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"flag"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -87,31 +85,40 @@ func main() {
 		models: data.NewModels(db),
 	}
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", cfg.port),
-		Handler: app.routes(),
-		// Создается новый экземпляр Go log.Logger с помощью log.New(),
-		// передавая кастомный Logger в качестве первого параметра.
-		// Пустая строка и 0 указывают, что экземпляр log.Logger
-		// не должен использовать префикс или какие-либо флаги.
-		ErrorLog:     log.New(logger, "", 0),
-		IdleTimeout:  time.Minute,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
-	}
+	//srv := &http.Server{
+	//	Addr:    fmt.Sprintf(":%d", cfg.port),
+	//	Handler: app.routes(),
+	//	// Создается новый экземпляр Go log.Logger с помощью log.New(),
+	//	// передавая кастомный Logger в качестве первого параметра.
+	//	// Пустая строка и 0 указывают, что экземпляр log.Logger
+	//	// не должен использовать префикс или какие-либо флаги.
+	//	ErrorLog:     log.New(logger, "", 0),
+	//	IdleTimeout:  time.Minute,
+	//	ReadTimeout:  10 * time.Second,
+	//	WriteTimeout: 30 * time.Second,
+	//}
+	grpcServer := NewGRPCServer(":9000", app.models)
 
 	// Снова используем метод PrintInfo() для записи сообщения "starting server"
 	// на уровне INFO. Но на этот раз передаем карту с дополнительными параметрами
 	// (операционная среда и адрес сервера) в качестве последнего параметра.
 	logger.PrintInfo("starting server", map[string]string{
-		"addr": srv.Addr,
+		"addr": grpcServer.addr,
 		"env":  cfg.env,
 	})
 
-	err = srv.ListenAndServe()
+	//err = srv.ListenAndServe()
+	// Запускаем gRPC-сервер в отдельном горутине
+	go func() {
+		if serveErr := grpcServer.Run(); serveErr != nil {
+			// Используйте метод PrintFatal() для логирования ошибки и завершения работы.
+			logger.PrintFatal(err, nil)
+		}
+	}()
 
-	// Используйте метод PrintFatal() для логирования ошибки и завершения работы.
-	logger.PrintFatal(err, nil)
+	// Ждём сигнала завершения (Ctrl+C или SIGTERM в Kubernetes)
+	waitForShutdown(grpcServer.server)
+	log.Println("Server gracefully stopped")
 }
 
 func openDB(cfg config) (*sql.DB, error) {

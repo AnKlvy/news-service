@@ -4,7 +4,7 @@
 // - protoc             v6.30.2
 // source: news.proto
 
-package news
+package news_proto
 
 import (
 	context "context"
@@ -20,22 +20,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NewsService_Insert_FullMethodName = "/data.NewsService/Insert"
-	NewsService_Get_FullMethodName    = "/data.NewsService/Get"
-	NewsService_Update_FullMethodName = "/data.NewsService/Update"
-	NewsService_Delete_FullMethodName = "/data.NewsService/Delete"
-	NewsService_GetAll_FullMethodName = "/data.NewsService/GetAll"
+	NewsService_CreateNewsHandler_FullMethodName = "/data.NewsService/CreateNewsHandler"
+	NewsService_ShowNewsHandler_FullMethodName   = "/data.NewsService/ShowNewsHandler"
+	NewsService_UpdateNewsHandler_FullMethodName = "/data.NewsService/UpdateNewsHandler"
+	NewsService_DeleteNewsHandler_FullMethodName = "/data.NewsService/DeleteNewsHandler"
+	NewsService_ListNewsHandler_FullMethodName   = "/data.NewsService/ListNewsHandler"
 )
 
 // NewsServiceClient is the client API for NewsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NewsServiceClient interface {
-	Insert(ctx context.Context, in *News, opts ...grpc.CallOption) (*News, error)
-	Get(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*News, error)
-	Update(ctx context.Context, in *News, opts ...grpc.CallOption) (*News, error)
-	Delete(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*NewsList, error)
+	CreateNewsHandler(ctx context.Context, in *CreateNewsRequest, opts ...grpc.CallOption) (*News, error)
+	ShowNewsHandler(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*News, error)
+	UpdateNewsHandler(ctx context.Context, in *UpdateNewsRequest, opts ...grpc.CallOption) (*News, error)
+	DeleteNewsHandler(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListNewsHandler(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*NewsList, error)
 }
 
 type newsServiceClient struct {
@@ -46,50 +46,50 @@ func NewNewsServiceClient(cc grpc.ClientConnInterface) NewsServiceClient {
 	return &newsServiceClient{cc}
 }
 
-func (c *newsServiceClient) Insert(ctx context.Context, in *News, opts ...grpc.CallOption) (*News, error) {
+func (c *newsServiceClient) CreateNewsHandler(ctx context.Context, in *CreateNewsRequest, opts ...grpc.CallOption) (*News, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(News)
-	err := c.cc.Invoke(ctx, NewsService_Insert_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, NewsService_CreateNewsHandler_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *newsServiceClient) Get(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*News, error) {
+func (c *newsServiceClient) ShowNewsHandler(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*News, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(News)
-	err := c.cc.Invoke(ctx, NewsService_Get_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, NewsService_ShowNewsHandler_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *newsServiceClient) Update(ctx context.Context, in *News, opts ...grpc.CallOption) (*News, error) {
+func (c *newsServiceClient) UpdateNewsHandler(ctx context.Context, in *UpdateNewsRequest, opts ...grpc.CallOption) (*News, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(News)
-	err := c.cc.Invoke(ctx, NewsService_Update_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, NewsService_UpdateNewsHandler_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *newsServiceClient) Delete(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *newsServiceClient) DeleteNewsHandler(ctx context.Context, in *NewsId, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, NewsService_Delete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, NewsService_DeleteNewsHandler_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *newsServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*NewsList, error) {
+func (c *newsServiceClient) ListNewsHandler(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*NewsList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(NewsList)
-	err := c.cc.Invoke(ctx, NewsService_GetAll_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, NewsService_ListNewsHandler_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,11 +100,11 @@ func (c *newsServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts 
 // All implementations must embed UnimplementedNewsServiceServer
 // for forward compatibility.
 type NewsServiceServer interface {
-	Insert(context.Context, *News) (*News, error)
-	Get(context.Context, *NewsId) (*News, error)
-	Update(context.Context, *News) (*News, error)
-	Delete(context.Context, *NewsId) (*emptypb.Empty, error)
-	GetAll(context.Context, *GetAllRequest) (*NewsList, error)
+	CreateNewsHandler(context.Context, *CreateNewsRequest) (*News, error)
+	ShowNewsHandler(context.Context, *NewsId) (*News, error)
+	UpdateNewsHandler(context.Context, *UpdateNewsRequest) (*News, error)
+	DeleteNewsHandler(context.Context, *NewsId) (*emptypb.Empty, error)
+	ListNewsHandler(context.Context, *GetAllRequest) (*NewsList, error)
 	mustEmbedUnimplementedNewsServiceServer()
 }
 
@@ -115,20 +115,20 @@ type NewsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedNewsServiceServer struct{}
 
-func (UnimplementedNewsServiceServer) Insert(context.Context, *News) (*News, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Insert not implemented")
+func (UnimplementedNewsServiceServer) CreateNewsHandler(context.Context, *CreateNewsRequest) (*News, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateNewsHandler not implemented")
 }
-func (UnimplementedNewsServiceServer) Get(context.Context, *NewsId) (*News, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+func (UnimplementedNewsServiceServer) ShowNewsHandler(context.Context, *NewsId) (*News, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShowNewsHandler not implemented")
 }
-func (UnimplementedNewsServiceServer) Update(context.Context, *News) (*News, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedNewsServiceServer) UpdateNewsHandler(context.Context, *UpdateNewsRequest) (*News, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNewsHandler not implemented")
 }
-func (UnimplementedNewsServiceServer) Delete(context.Context, *NewsId) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedNewsServiceServer) DeleteNewsHandler(context.Context, *NewsId) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteNewsHandler not implemented")
 }
-func (UnimplementedNewsServiceServer) GetAll(context.Context, *GetAllRequest) (*NewsList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+func (UnimplementedNewsServiceServer) ListNewsHandler(context.Context, *GetAllRequest) (*NewsList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListNewsHandler not implemented")
 }
 func (UnimplementedNewsServiceServer) mustEmbedUnimplementedNewsServiceServer() {}
 func (UnimplementedNewsServiceServer) testEmbeddedByValue()                     {}
@@ -151,92 +151,92 @@ func RegisterNewsServiceServer(s grpc.ServiceRegistrar, srv NewsServiceServer) {
 	s.RegisterService(&NewsService_ServiceDesc, srv)
 }
 
-func _NewsService_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(News)
+func _NewsService_CreateNewsHandler_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNewsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsServiceServer).Insert(ctx, in)
+		return srv.(NewsServiceServer).CreateNewsHandler(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NewsService_Insert_FullMethodName,
+		FullMethod: NewsService_CreateNewsHandler_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsServiceServer).Insert(ctx, req.(*News))
+		return srv.(NewsServiceServer).CreateNewsHandler(ctx, req.(*CreateNewsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NewsService_ShowNewsHandler_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NewsId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsServiceServer).Get(ctx, in)
+		return srv.(NewsServiceServer).ShowNewsHandler(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NewsService_Get_FullMethodName,
+		FullMethod: NewsService_ShowNewsHandler_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsServiceServer).Get(ctx, req.(*NewsId))
+		return srv.(NewsServiceServer).ShowNewsHandler(ctx, req.(*NewsId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(News)
+func _NewsService_UpdateNewsHandler_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateNewsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsServiceServer).Update(ctx, in)
+		return srv.(NewsServiceServer).UpdateNewsHandler(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NewsService_Update_FullMethodName,
+		FullMethod: NewsService_UpdateNewsHandler_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsServiceServer).Update(ctx, req.(*News))
+		return srv.(NewsServiceServer).UpdateNewsHandler(ctx, req.(*UpdateNewsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NewsService_DeleteNewsHandler_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NewsId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsServiceServer).Delete(ctx, in)
+		return srv.(NewsServiceServer).DeleteNewsHandler(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NewsService_Delete_FullMethodName,
+		FullMethod: NewsService_DeleteNewsHandler_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsServiceServer).Delete(ctx, req.(*NewsId))
+		return srv.(NewsServiceServer).DeleteNewsHandler(ctx, req.(*NewsId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NewsService_ListNewsHandler_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsServiceServer).GetAll(ctx, in)
+		return srv.(NewsServiceServer).ListNewsHandler(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NewsService_GetAll_FullMethodName,
+		FullMethod: NewsService_ListNewsHandler_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsServiceServer).GetAll(ctx, req.(*GetAllRequest))
+		return srv.(NewsServiceServer).ListNewsHandler(ctx, req.(*GetAllRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -249,24 +249,24 @@ var NewsService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*NewsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Insert",
-			Handler:    _NewsService_Insert_Handler,
+			MethodName: "CreateNewsHandler",
+			Handler:    _NewsService_CreateNewsHandler_Handler,
 		},
 		{
-			MethodName: "Get",
-			Handler:    _NewsService_Get_Handler,
+			MethodName: "ShowNewsHandler",
+			Handler:    _NewsService_ShowNewsHandler_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _NewsService_Update_Handler,
+			MethodName: "UpdateNewsHandler",
+			Handler:    _NewsService_UpdateNewsHandler_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _NewsService_Delete_Handler,
+			MethodName: "DeleteNewsHandler",
+			Handler:    _NewsService_DeleteNewsHandler_Handler,
 		},
 		{
-			MethodName: "GetAll",
-			Handler:    _NewsService_GetAll_Handler,
+			MethodName: "ListNewsHandler",
+			Handler:    _NewsService_ListNewsHandler_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
