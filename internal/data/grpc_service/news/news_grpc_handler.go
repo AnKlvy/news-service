@@ -3,14 +3,14 @@ package news
 import (
 	"context"
 	"errors"
+	"github.com/AnKlvy/news-service/internal/data/database"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"news_service.andreyklimov.net/internal/data/database"
 
-	"news_service.andreyklimov.net/internal/validator"
-	"news_service.andreyklimov.net/protobuf/gen_news"
+	"github.com/AnKlvy/news-service/internal/validator"
+	"github.com/AnKlvy/news-service/protobuf/gen_news"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/AnKlvy/news-service/internal/validator"
 	"github.com/lib/pq"
-	"news_service.andreyklimov.net/internal/validator"
 )
 
 type News struct {

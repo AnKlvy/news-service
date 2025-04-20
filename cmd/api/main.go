@@ -4,14 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"flag"
+	"github.com/AnKlvy/news-service/internal/data/database"
 	"log"
-	"news_service.andreyklimov.net/internal/data/database"
 	"os"
 	"time"
 
+	"github.com/AnKlvy/news-service/internal/jsonlog"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"news_service.andreyklimov.net/internal/jsonlog"
 )
 
 const version = "1.0.0"

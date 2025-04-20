@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/AnKlvy/news-service/internal/data/database"
+	"github.com/AnKlvy/news-service/internal/data/grpc_service/news"
 	"log"
 	"net"
-	"news_service.andreyklimov.net/internal/data/database"
-	"news_service.andreyklimov.net/internal/data/grpc_service/news"
 	"os"
 	"os/signal"
 	"syscall"

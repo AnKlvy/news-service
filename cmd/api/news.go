@@ -3,11 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/AnKlvy/news-service/internal/data/database"
 	"net/http"
-	"news_service.andreyklimov.net/internal/data/database"
 	"strconv"
 
-	"news_service.andreyklimov.net/internal/validator"
+	"github.com/AnKlvy/news-service/internal/validator"
 )
 
 func (app *application) createNewsHandler(w http.ResponseWriter, r *http.Request) {

@@ -4,7 +4,7 @@ import (
 	"math"
 	"strings"
 
-	"news_service.andreyklimov.net/internal/validator"
+	"github.com/AnKlvy/news-service/internal/validator"
 )
 
 type Filters struct {

@@ -11,7 +11,7 @@ import (
 
 	"net/url"
 
-	"news_service.andreyklimov.net/internal/validator"
+	"github.com/AnKlvy/news-service/internal/validator"
 
 	"github.com/julienschmidt/httprouter"
 )
