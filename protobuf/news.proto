@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package data;
 
-option go_package = "news-service/proto;news";
+option go_package = "news-service/proto;news_proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";

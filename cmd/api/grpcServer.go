@@ -3,21 +3,22 @@ package main
 import (
 	"log"
 	"net"
+	"news_service.andreyklimov.net/internal/data/database"
+	"news_service.andreyklimov.net/internal/data/grpc_service/news"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"google.golang.org/grpc"
-	"news_service.andreyklimov.net/internal/data"
 )
 
 type GRPCServer struct {
 	addr   string
-	model  data.Models
+	model  database.Models
 	server *grpc.Server
 }
 
-func NewGRPCServer(addr string, models data.Models) *GRPCServer {
+func NewGRPCServer(addr string, models database.Models) *GRPCServer {
 	return &GRPCServer{addr: addr,
 		model: models}
 }
@@ -32,7 +33,7 @@ func (s *GRPCServer) Run() error {
 
 	// register our grpc services
 	newsService := s.model
-	NewNewsService(s.server, newsService)
+	news.NewNewsService(s.server, newsService)
 
 	log.Println("Starting gRPC server on", s.addr)
 

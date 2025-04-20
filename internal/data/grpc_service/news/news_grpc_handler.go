@@ -1,4 +1,4 @@
-package main
+package news
 
 import (
 	"context"
@@ -7,27 +7,27 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"news_service.andreyklimov.net/internal/data/database"
 
-	"news_service.andreyklimov.net/internal/data"
 	"news_service.andreyklimov.net/internal/validator"
 	"news_service.andreyklimov.net/protobuf/gen_news"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type NewsService struct {
-	repo data.Models
+type Service struct {
+	repo database.Models
 	news_proto.UnimplementedNewsServiceServer
 }
 
-func NewNewsService(grpc *grpc.Server, repo data.Models) {
-	newsService := &NewsService{repo: repo}
+func NewNewsService(grpc *grpc.Server, repo database.Models) {
+	newsService := &Service{repo: repo}
 	news_proto.RegisterNewsServiceServer(grpc, newsService)
 }
 
-func (s *NewsService) CreateNewsHandler(ctx context.Context, req *news_proto.CreateNewsRequest) (*news_proto.News, error) {
+func (s *Service) CreateNewsHandler(ctx context.Context, req *news_proto.CreateNewsRequest) (*news_proto.News, error) {
 	imageURL := req.GetImageUrl()
-	news := &data.News{
+	news := &database.News{
 		Title:      req.GetTitle(),
 		Content:    req.GetContent(),
 		Categories: req.GetCategories(),
@@ -36,7 +36,7 @@ func (s *NewsService) CreateNewsHandler(ctx context.Context, req *news_proto.Cre
 	}
 
 	v := validator.New()
-	if data.ValidateNews(v, news); !v.Valid() {
+	if database.ValidateNews(v, news); !v.Valid() {
 		return nil, errors.New("invalid input data")
 	}
 
@@ -48,7 +48,7 @@ func (s *NewsService) CreateNewsHandler(ctx context.Context, req *news_proto.Cre
 	return convertNewsToPB(news), nil
 }
 
-func (s *NewsService) ShowNewsHandler(ctx context.Context, req *news_proto.NewsId) (*news_proto.News, error) {
+func (s *Service) ShowNewsHandler(ctx context.Context, req *news_proto.NewsId) (*news_proto.News, error) {
 	news, err := s.repo.News.Get(req.GetId())
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (s *NewsService) ShowNewsHandler(ctx context.Context, req *news_proto.NewsI
 	return convertNewsToPB(news), nil
 }
 
-func (s *NewsService) UpdateNewsHandler(ctx context.Context, req *news_proto.UpdateNewsRequest) (*news_proto.News, error) {
+func (s *Service) UpdateNewsHandler(ctx context.Context, req *news_proto.UpdateNewsRequest) (*news_proto.News, error) {
 	news, err := s.repo.News.Get(req.GetId())
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func (s *NewsService) UpdateNewsHandler(ctx context.Context, req *news_proto.Upd
 	}
 
 	v := validator.New()
-	if data.ValidateNews(v, news); !v.Valid() {
+	if database.ValidateNews(v, news); !v.Valid() {
 		return nil, errors.New("invalid input data")
 	}
 
@@ -98,7 +98,7 @@ func (s *NewsService) UpdateNewsHandler(ctx context.Context, req *news_proto.Upd
 	return convertNewsToPB(news), nil
 }
 
-func (s *NewsService) DeleteNewsHandler(ctx context.Context, req *news_proto.NewsId) (*emptypb.Empty, error) {
+func (s *Service) DeleteNewsHandler(ctx context.Context, req *news_proto.NewsId) (*emptypb.Empty, error) {
 	err := s.repo.News.Delete(req.GetId())
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (s *NewsService) DeleteNewsHandler(ctx context.Context, req *news_proto.New
 	return nil, nil
 }
 
-func (s *NewsService) ListNewsHandler(ctx context.Context, req *news_proto.GetAllRequest) (*news_proto.NewsList, error) {
+func (s *Service) ListNewsHandler(ctx context.Context, req *news_proto.GetAllRequest) (*news_proto.NewsList, error) {
 	page := int(req.GetPage())
 	if page <= 0 {
 		page = 1
@@ -116,7 +116,7 @@ func (s *NewsService) ListNewsHandler(ctx context.Context, req *news_proto.GetAl
 		pageSize = 20
 	}
 
-	filters := data.Filters{
+	filters := database.Filters{
 		Page:         page,
 		PageSize:     pageSize,
 		Sort:         req.GetSort(),
@@ -124,7 +124,7 @@ func (s *NewsService) ListNewsHandler(ctx context.Context, req *news_proto.GetAl
 	}
 	v := validator.New()
 
-	if data.ValidateFilters(v, filters); !v.Valid() {
+	if database.ValidateFilters(v, filters); !v.Valid() {
 		return nil, errors.New("invalid input data")
 	}
 
@@ -154,7 +154,7 @@ func (s *NewsService) ListNewsHandler(ctx context.Context, req *news_proto.GetAl
 	return &news_proto.NewsList{News: pbNews, Metadata: metadataProto}, nil
 }
 
-func convertNewsToPB(n *data.News) *news_proto.News {
+func convertNewsToPB(n *database.News) *news_proto.News {
 	if n == nil {
 		return &news_proto.News{}
 	}
@@ -168,5 +168,6 @@ func convertNewsToPB(n *data.News) *news_proto.News {
 		ImageUrl:   imageURL,
 		CreatedAt:  timestamppb.New(n.CreatedAt),
 		UpdatedAt:  timestamppb.New(n.UpdatedAt),
+		Version:    n.Version,
 	}
 }

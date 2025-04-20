@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"flag"
 	"log"
+	"news_service.andreyklimov.net/internal/data/database"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"news_service.andreyklimov.net/internal/data"
 	"news_service.andreyklimov.net/internal/jsonlog"
 )
 
@@ -41,7 +41,7 @@ type config struct {
 type application struct {
 	config config
 	logger *jsonlog.Logger
-	models data.Models
+	models database.Models
 }
 
 func main() {
@@ -82,7 +82,7 @@ func main() {
 	app := &application{
 		config: cfg,
 		logger: logger,
-		models: data.NewModels(db),
+		models: database.NewModels(db),
 	}
 
 	//srv := &http.Server{

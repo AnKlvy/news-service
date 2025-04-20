@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"news_service.andreyklimov.net/internal/data/database"
 	"strconv"
 
-	"news_service.andreyklimov.net/internal/data"
 	"news_service.andreyklimov.net/internal/validator"
 )
 
@@ -25,7 +25,7 @@ func (app *application) createNewsHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	news := &data.News{
+	news := &database.News{
 		Title:      input.Title,
 		Content:    input.Content,
 		Categories: input.Categories,
@@ -34,7 +34,7 @@ func (app *application) createNewsHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	v := validator.New()
-	if data.ValidateNews(v, news); !v.Valid() {
+	if database.ValidateNews(v, news); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
@@ -64,7 +64,7 @@ func (app *application) showNewsHandler(w http.ResponseWriter, r *http.Request) 
 	news, err := app.models.News.Get(id)
 	if err != nil {
 		switch {
-		case errors.Is(err, data.ErrRecordNotFound):
+		case errors.Is(err, database.ErrRecordNotFound):
 			app.notFoundResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -88,7 +88,7 @@ func (app *application) updateNewsHandler(w http.ResponseWriter, r *http.Request
 	news, err := app.models.News.Get(id)
 	if err != nil {
 		switch {
-		case errors.Is(err, data.ErrRecordNotFound):
+		case errors.Is(err, database.ErrRecordNotFound):
 			app.notFoundResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -134,7 +134,7 @@ func (app *application) updateNewsHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	v := validator.New()
-	if data.ValidateNews(v, news); !v.Valid() {
+	if database.ValidateNews(v, news); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
@@ -142,7 +142,7 @@ func (app *application) updateNewsHandler(w http.ResponseWriter, r *http.Request
 	err = app.models.News.Update(news)
 	if err != nil {
 		switch {
-		case errors.Is(err, data.ErrEditConflict):
+		case errors.Is(err, database.ErrEditConflict):
 			app.editConflictResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -166,7 +166,7 @@ func (app *application) deleteNewsHandler(w http.ResponseWriter, r *http.Request
 	err = app.models.News.Delete(id)
 	if err != nil {
 		switch {
-		case errors.Is(err, data.ErrRecordNotFound):
+		case errors.Is(err, database.ErrRecordNotFound):
 			app.notFoundResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -185,7 +185,7 @@ func (app *application) listNewsHandler(w http.ResponseWriter, r *http.Request) 
 		Title      string
 		Categories []string
 		Status     string
-		data.Filters
+		database.Filters
 	}
 
 	v := validator.New()
@@ -199,7 +199,7 @@ func (app *application) listNewsHandler(w http.ResponseWriter, r *http.Request) 
 	input.Filters.Sort = app.readString(qs, "sort", "id")
 	input.Filters.SortSafelist = []string{"id", "title", "status", "-id", "-title", "-status"}
 
-	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+	if database.ValidateFilters(v, input.Filters); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
