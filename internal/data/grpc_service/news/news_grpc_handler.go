@@ -116,10 +116,15 @@ func (s *Service) ListNewsHandler(ctx context.Context, req *news_proto.GetAllReq
 		pageSize = 20
 	}
 
+	sort := req.GetSort()
+	if sort == "" {
+		sort = "id"
+	}
+
 	filters := database.Filters{
 		Page:         page,
 		PageSize:     pageSize,
-		Sort:         req.GetSort(),
+		Sort:         sort,
 		SortSafelist: []string{"id", "title", "status", "-id", "-title", "-status"},
 	}
 	v := validator.New()
