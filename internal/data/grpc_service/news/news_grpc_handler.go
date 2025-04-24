@@ -125,7 +125,7 @@ func (s *Service) ListNewsHandler(ctx context.Context, req *news_proto.GetAllReq
 	v := validator.New()
 
 	if database.ValidateFilters(v, filters); !v.Valid() {
-		return nil, errors.New("invalid input data")
+		return nil, errors.New("invalid filters input data")
 	}
 
 	categories := req.GetCategories()
