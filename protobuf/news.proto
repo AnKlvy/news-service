@@ -51,7 +51,7 @@ message CreateNewsRequest {
   string content = 2;
   repeated string categories = 3;
   string status = 4;
-  string image_url = 5; // Optional field
+  optional string image_url = 5; // Optional field
 }
 
 message UpdateNewsRequest {

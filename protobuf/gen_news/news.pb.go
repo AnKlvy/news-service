@@ -393,7 +393,7 @@ type CreateNewsRequest struct {
 	Content       string                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 	Categories    []string               `protobuf:"bytes,3,rep,name=categories,proto3" json:"categories,omitempty"`
 	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	ImageUrl      string                 `protobuf:"bytes,5,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"` // Optional field
+	ImageUrl      *string                `protobuf:"bytes,5,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"` // Optional field
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -457,8 +457,8 @@ func (x *CreateNewsRequest) GetStatus() string {
 }
 
 func (x *CreateNewsRequest) GetImageUrl() string {
-	if x != nil {
-		return x.ImageUrl
+	if x != nil && x.ImageUrl != nil {
+		return *x.ImageUrl
 	}
 	return ""
 }
@@ -598,15 +598,17 @@ const file_news_proto_rawDesc = "" +
 	".data.NewsR\x04news\x12*\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x0e.data.MetadataR\bmetadata\"\x18\n" +
 	"\x06NewsId\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x98\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xab\x01\n" +
 	"\x11CreateNewsRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
 	"\acontent\x18\x02 \x01(\tR\acontent\x12\x1e\n" +
 	"\n" +
 	"categories\x18\x03 \x03(\tR\n" +
 	"categories\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\tR\x06status\x12\x1b\n" +
-	"\timage_url\x18\x05 \x01(\tR\bimageUrl\"\x96\x02\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12 \n" +
+	"\timage_url\x18\x05 \x01(\tH\x00R\bimageUrl\x88\x01\x01B\f\n" +
+	"\n" +
+	"_image_url\"\x96\x02\n" +
 	"\x11UpdateNewsRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12\x1d\n" +
@@ -687,6 +689,7 @@ func file_news_proto_init() {
 		return
 	}
 	file_news_proto_msgTypes[0].OneofWrappers = []any{}
+	file_news_proto_msgTypes[5].OneofWrappers = []any{}
 	file_news_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
