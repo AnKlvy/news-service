@@ -26,13 +26,13 @@ func NewNewsService(grpc *grpc.Server, repo database.Models) {
 }
 
 func (s *Service) CreateNewsHandler(ctx context.Context, req *news_proto.CreateNewsRequest) (*news_proto.News, error) {
-	imageURL := req.GetImageUrl()
+
 	news := &database.News{
 		Title:      req.GetTitle(),
 		Content:    req.GetContent(),
 		Categories: req.GetCategories(),
 		Status:     req.GetStatus(),
-		ImageURL:   &imageURL,
+		ImageURLs:  req.GetImageUrls(),
 		Author:     req.GetAuthor(),
 	}
 
@@ -81,9 +81,8 @@ func (s *Service) UpdateNewsHandler(ctx context.Context, req *news_proto.UpdateN
 	if req.Status != nil {
 		news.Status = *req.Status
 	}
-	if req.ImageUrl != nil {
-		imageURL := *req.ImageUrl
-		news.ImageURL = &imageURL
+	if len(req.GetImageUrls()) > 0 {
+		news.ImageURLs = req.GetImageUrls()
 	}
 	if req.Author != nil {
 		news.Author = *req.Author
@@ -167,14 +166,13 @@ func convertNewsToPB(n *database.News) *news_proto.News {
 	if n == nil {
 		return &news_proto.News{}
 	}
-	imageURL := n.ImageURL
 	return &news_proto.News{
 		Id:         n.ID,
 		Title:      n.Title,
 		Content:    n.Content,
 		Categories: n.Categories,
 		Status:     n.Status,
-		ImageUrl:   imageURL,
+		ImageUrls:  n.ImageURLs,
 		Author:     n.Author,
 		CreatedAt:  timestamppb.New(n.CreatedAt),
 		UpdatedAt:  timestamppb.New(n.UpdatedAt),

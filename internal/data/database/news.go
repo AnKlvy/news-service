@@ -19,7 +19,7 @@ type News struct {
 	Content    string    `json:"content"`
 	Categories []string  `json:"categories"`
 	Status     string    `json:"status"`
-	ImageURL   *string   `json:"image_url,omitempty"`
+	ImageURLs  []string  `json:"image_urls,omitempty"`
 	Author     string    `json:"author"`
 	Version    int32     `json:"version"`
 }
@@ -39,8 +39,8 @@ func ValidateNews(v *validator.Validator, news *News) {
 	v.Check(news.Status != "", "status", "must be provided")
 	v.Check(validator.PermittedValue(news.Status, "DRAFT", "PUBLISHED", "ARCHIVED"), "status", "must be a valid status")
 
-	if news.ImageURL != nil {
-		v.Check(len(*news.ImageURL) <= 1000, "image_url", "must not be more than 1000 bytes long")
+	if news.ImageURLs != nil {
+		v.Check(len(news.ImageURLs) <= 7, "image_urls", "must not be more than 7 images")
 	}
 }
 
@@ -51,10 +51,10 @@ type NewsModel struct {
 
 func (m NewsModel) Insert(news *News) error {
 	query := `
-    INSERT INTO news (title, content, categories, status, image_url, author)
+    INSERT INTO news (title, content, categories, status, image_urls, author)
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING id, created_at, version`
-	args := []any{news.Title, news.Content, pq.Array(news.Categories), news.Status, news.ImageURL, news.Author}
+	args := []any{news.Title, news.Content, pq.Array(news.Categories), news.Status, pq.Array(news.ImageURLs), news.Author}
 
 	// Создаём контекст с тайм-аутом 3 секунды.
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -70,7 +70,7 @@ func (m NewsModel) Get(id int64) (*News, error) {
 	}
 
 	query := `
-    SELECT id, created_at, updated_at, title, content, categories, status, image_url, author, version
+    SELECT id, created_at, updated_at, title, content, categories, status, image_urls, author, version
     FROM news
     WHERE id = $1`
 
@@ -86,7 +86,7 @@ func (m NewsModel) Get(id int64) (*News, error) {
 		&news.Content,
 		pq.Array(&news.Categories),
 		&news.Status,
-		&news.ImageURL,
+		pq.Array(&news.ImageURLs),
 		&news.Author,
 		&news.Version,
 	)
@@ -104,7 +104,7 @@ func (m NewsModel) Get(id int64) (*News, error) {
 func (m NewsModel) Update(news *News) error {
 	query := `
     UPDATE news
-    SET title = $1, content = $2, categories = $3, status = $4, image_url = $5, author = $6, updated_at = now(), version = version + 1
+    SET title = $1, content = $2, categories = $3, status = $4, image_urls = $5, author = $6, updated_at = now(), version = version + 1
     WHERE id = $7 AND version = $8
     RETURNING version`
 	args := []any{
@@ -112,7 +112,7 @@ func (m NewsModel) Update(news *News) error {
 		news.Content,
 		pq.Array(news.Categories),
 		news.Status,
-		news.ImageURL,
+		pq.Array(news.ImageURLs),
 		news.Author,
 		news.ID,
 		news.Version,
@@ -160,7 +160,7 @@ func (m NewsModel) Delete(id int64) error {
 
 func (m NewsModel) GetAll(title string, categories []string, status string, filters Filters) ([]*News, Metadata, error) {
 	query := fmt.Sprintf(
-		`SELECT count(*) OVER(), id, created_at, updated_at, title, content, categories, status, image_url, author, version
+		`SELECT count(*) OVER(), id, created_at, updated_at, title, content, categories, status, image_urls, author, version
 		 FROM news
 		 WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
 		 AND (categories @> $2 OR $2 = '{}')
@@ -192,7 +192,7 @@ func (m NewsModel) GetAll(title string, categories []string, status string, filt
 			&new.Content,
 			pq.Array(&new.Categories),
 			&new.Status,
-			&new.ImageURL,
+			pq.Array(&new.ImageURLs),
 			&new.Author,
 			&new.Version,
 		)
