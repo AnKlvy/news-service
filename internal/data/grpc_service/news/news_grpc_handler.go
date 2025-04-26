@@ -33,11 +33,12 @@ func (s *Service) CreateNewsHandler(ctx context.Context, req *news_proto.CreateN
 		Categories: req.GetCategories(),
 		Status:     req.GetStatus(),
 		ImageURL:   &imageURL,
+		Author:     req.GetAuthor(),
 	}
 
 	v := validator.New()
 	if database.ValidateNews(v, news); !v.Valid() {
-		return nil, errors.New("invalid input data")
+		return nil, errors.New("invalid news input data")
 	}
 
 	err := s.repo.News.Insert(news)
@@ -83,6 +84,9 @@ func (s *Service) UpdateNewsHandler(ctx context.Context, req *news_proto.UpdateN
 	if req.ImageUrl != nil {
 		imageURL := *req.ImageUrl
 		news.ImageURL = &imageURL
+	}
+	if req.Author != nil {
+		news.Author = *req.Author
 	}
 
 	v := validator.New()
@@ -171,6 +175,7 @@ func convertNewsToPB(n *database.News) *news_proto.News {
 		Categories: n.Categories,
 		Status:     n.Status,
 		ImageUrl:   imageURL,
+		Author:     n.Author,
 		CreatedAt:  timestamppb.New(n.CreatedAt),
 		UpdatedAt:  timestamppb.New(n.UpdatedAt),
 		Version:    n.Version,
