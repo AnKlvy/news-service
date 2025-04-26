@@ -33,7 +33,8 @@ type News struct {
 	Categories    []string               `protobuf:"bytes,6,rep,name=categories,proto3" json:"categories,omitempty"`
 	Status        string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
 	ImageUrl      *string                `protobuf:"bytes,8,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
-	Version       int32                  `protobuf:"varint,9,opt,name=version,proto3" json:"version,omitempty"`
+	Author        string                 `protobuf:"bytes,9,opt,name=author,proto3" json:"author,omitempty"`
+	Version       int32                  `protobuf:"varint,10,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -124,6 +125,13 @@ func (x *News) GetImageUrl() string {
 	return ""
 }
 
+func (x *News) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
 func (x *News) GetVersion() int32 {
 	if x != nil {
 		return x.Version
@@ -207,6 +215,7 @@ func (x *Metadata) GetTotalRecords() int32 {
 	return 0
 }
 
+// TODO add filtering by author
 type GetAllRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
@@ -394,6 +403,7 @@ type CreateNewsRequest struct {
 	Categories    []string               `protobuf:"bytes,3,rep,name=categories,proto3" json:"categories,omitempty"`
 	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
 	ImageUrl      *string                `protobuf:"bytes,5,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"` // Optional field
+	Author        string                 `protobuf:"bytes,6,opt,name=author,proto3" json:"author,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -463,6 +473,13 @@ func (x *CreateNewsRequest) GetImageUrl() string {
 	return ""
 }
 
+func (x *CreateNewsRequest) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
 type UpdateNewsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -471,7 +488,8 @@ type UpdateNewsRequest struct {
 	Categories    []string               `protobuf:"bytes,4,rep,name=categories,proto3" json:"categories,omitempty"`
 	Status        *string                `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	ImageUrl      *string                `protobuf:"bytes,6,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
-	Version       *int32                 `protobuf:"varint,7,opt,name=version,proto3,oneof" json:"version,omitempty"`
+	Author        *string                `protobuf:"bytes,7,opt,name=author,proto3,oneof" json:"author,omitempty"`
+	Version       *int32                 `protobuf:"varint,8,opt,name=version,proto3,oneof" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -548,6 +566,13 @@ func (x *UpdateNewsRequest) GetImageUrl() string {
 	return ""
 }
 
+func (x *UpdateNewsRequest) GetAuthor() string {
+	if x != nil && x.Author != nil {
+		return *x.Author
+	}
+	return ""
+}
+
 func (x *UpdateNewsRequest) GetVersion() int32 {
 	if x != nil && x.Version != nil {
 		return *x.Version
@@ -560,7 +585,7 @@ var File_news_proto protoreflect.FileDescriptor
 const file_news_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"news.proto\x12\x04data\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xbe\x02\n" +
+	"news.proto\x12\x04data\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xd6\x02\n" +
 	"\x04News\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x129\n" +
 	"\n" +
@@ -573,8 +598,10 @@ const file_news_proto_rawDesc = "" +
 	"categories\x18\x06 \x03(\tR\n" +
 	"categories\x12\x16\n" +
 	"\x06status\x18\a \x01(\tR\x06status\x12 \n" +
-	"\timage_url\x18\b \x01(\tH\x00R\bimageUrl\x88\x01\x01\x12\x18\n" +
-	"\aversion\x18\t \x01(\x05R\aversionB\f\n" +
+	"\timage_url\x18\b \x01(\tH\x00R\bimageUrl\x88\x01\x01\x12\x16\n" +
+	"\x06author\x18\t \x01(\tR\x06author\x12\x18\n" +
+	"\aversion\x18\n" +
+	" \x01(\x05R\aversionB\f\n" +
 	"\n" +
 	"_image_url\"\xab\x01\n" +
 	"\bMetadata\x12!\n" +
@@ -598,7 +625,7 @@ const file_news_proto_rawDesc = "" +
 	".data.NewsR\x04news\x12*\n" +
 	"\bmetadata\x18\x02 \x01(\v2\x0e.data.MetadataR\bmetadata\"\x18\n" +
 	"\x06NewsId\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xab\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xc3\x01\n" +
 	"\x11CreateNewsRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
 	"\acontent\x18\x02 \x01(\tR\acontent\x12\x1e\n" +
@@ -606,9 +633,10 @@ const file_news_proto_rawDesc = "" +
 	"categories\x18\x03 \x03(\tR\n" +
 	"categories\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\tR\x06status\x12 \n" +
-	"\timage_url\x18\x05 \x01(\tH\x00R\bimageUrl\x88\x01\x01B\f\n" +
+	"\timage_url\x18\x05 \x01(\tH\x00R\bimageUrl\x88\x01\x01\x12\x16\n" +
+	"\x06author\x18\x06 \x01(\tR\x06authorB\f\n" +
 	"\n" +
-	"_image_url\"\x96\x02\n" +
+	"_image_url\"\xbe\x02\n" +
 	"\x11UpdateNewsRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12\x1d\n" +
@@ -617,14 +645,16 @@ const file_news_proto_rawDesc = "" +
 	"categories\x18\x04 \x03(\tR\n" +
 	"categories\x12\x1b\n" +
 	"\x06status\x18\x05 \x01(\tH\x02R\x06status\x88\x01\x01\x12 \n" +
-	"\timage_url\x18\x06 \x01(\tH\x03R\bimageUrl\x88\x01\x01\x12\x1d\n" +
-	"\aversion\x18\a \x01(\x05H\x04R\aversion\x88\x01\x01B\b\n" +
+	"\timage_url\x18\x06 \x01(\tH\x03R\bimageUrl\x88\x01\x01\x12\x1b\n" +
+	"\x06author\x18\a \x01(\tH\x04R\x06author\x88\x01\x01\x12\x1d\n" +
+	"\aversion\x18\b \x01(\x05H\x05R\aversion\x88\x01\x01B\b\n" +
 	"\x06_titleB\n" +
 	"\n" +
 	"\b_contentB\t\n" +
 	"\a_statusB\f\n" +
 	"\n" +
-	"_image_urlB\n" +
+	"_image_urlB\t\n" +
+	"\a_authorB\n" +
 	"\n" +
 	"\b_version2\xa1\x02\n" +
 	"\vNewsService\x128\n" +

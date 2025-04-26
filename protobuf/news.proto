@@ -17,7 +17,8 @@ message News {
   repeated string categories = 6;
   string status = 7;
   optional string image_url = 8;
-  int32 version = 9;
+  string author = 9;
+  int32 version = 10;
 }
 
 message Metadata {
@@ -27,7 +28,7 @@ message Metadata {
   int32 last_page = 4;
   int32 total_records = 5;
 }
-
+//TODO add filtering by author
 message GetAllRequest {
   string title = 1;
   repeated string categories = 2;
@@ -52,6 +53,7 @@ message CreateNewsRequest {
   repeated string categories = 3;
   string status = 4;
   optional string image_url = 5; // Optional field
+  string author = 6;
 }
 
 message UpdateNewsRequest {
@@ -61,7 +63,8 @@ message UpdateNewsRequest {
   repeated string categories = 4;
   optional string status = 5;
   optional string image_url = 6;
-  optional int32 version = 7;
+  optional string author = 7;
+  optional int32 version = 8;
 }
 
 service NewsService {
